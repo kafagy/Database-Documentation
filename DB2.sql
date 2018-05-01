@@ -1,0 +1,55 @@
+-- ALl Table Names
+SELECT
+  T.TABNAME AS Table
+FROM
+  SYSCAT.TABLES T
+WHERE T.TABSCHEMA = 'schema'
+  AND T.TYPE = 'T';
+
+-- TABLE PROPERTIES
+SELECT
+  C.COLNO + 1 AS No,
+  C.COLNAME AS Column,
+  CASE C.TYPENAME
+    WHEN 'VARCHAR' THEN 'Varchar(' || C.LENGTH || ')'
+    WHEN 'CHAR'    THEN 'Char(' || C.LENGTH || ')'
+    WHEN 'DECIMAL' THEN 'Decimal(' || C.LENGTH || ', ' || C.SCALE || ')'
+    WHEN 'INTEGER' THEN 'Integer(10)'
+    WHEN 'TIME' THEN 'Time'
+    WHEN 'BIGINT' THEN 'BigInt'
+    WHEN 'DATE' THEN 'Date'
+  ELSE C.TYPENAME
+  END AS Datatype,
+  C.DEFAULT AS Default,
+  C.NULLS AS Null
+FROM
+  SYSCAT.TABLES T
+INNER JOIN SYSCAT.COLUMNS C
+  ON T.TABNAME = C.TABNAME
+  AND T.TABSCHEMA = C.TABSCHEMA
+WHERE C.TABSCHEMA = 'schema'
+  AND T.TABNAME = 'table'
+  AND TYPE = 'T'
+ORDER BY No;
+
+-- PRIMARY KEYS
+SELECT
+  SI.Name AS Constraint,
+  REPLACE(LTRIM(SI.COLNAMES, '+'), '+', ' ') AS Column,
+  SI.UNIQUERULE AS "Unique Rule"
+FROM
+  SYSIBM.SYSINDEXES SI
+WHERE SI.TBNAME = 'table'
+  AND SI.TBCREATOR = 'schema';
+
+-- FOREIGN KEYS
+SELECT
+  R.CONSTNAME AS Constraint,
+  R.TABNAME AS "FK Table",
+  R.FK_COLNAMES AS "FK Column",
+  R.REFTABNAME AS "PK Table",
+  R.PK_COLNAMES AS "PK Column"
+FROM
+  SYSCAT.REFERENCES R
+WHERE TABNAME = 'table'
+  AND TABSCHEMA = 'schema';
