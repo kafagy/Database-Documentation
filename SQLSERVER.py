@@ -29,6 +29,7 @@ cursor.execute('''
           WHERE TABLE_TYPE = 'BASE TABLE' 
             AND TABLE_SCHEMA = 'schema'
           ORDER BY T.TABLE_NAME ASC;''')
+
 tableNames = cursor.fetchall()
 for tableName in tableNames:
     df = pd.read_sql_query('''

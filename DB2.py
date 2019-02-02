@@ -23,6 +23,7 @@ cursor.execute('''
             WHERE T.TABSCHEMA = ''
               AND T.TYPE = 'T'
             ORDER BY T.TABNAME;''')
+
 tableNames = cursor.fetchall()
 for tableName in tableNames:
     print(tableName[0])
@@ -84,40 +85,42 @@ for tableName in tableNames:
 
     # Constructing Word Table For Every DataFrame
     document.add_heading('schema.' + tableName[0], level=1)
-    t = document.add_table(df.shape[0]+1, df.shape[1], style='Light Grid Accent 1')
+    t = document.add_table(df.shape[0] + 1, df.shape[1], style='Light Grid Accent 1')
     for idx in range(len(df.columns)):
         t.columns[idx].width = Mm(tableMax[idx] * 5)
         for cell in t.column_cells(idx):
             cell.width = Mm(tableMax[idx] * 5)
     for j in range(df.shape[-1]):
-        t.cell(0,j).text = df.columns[j]
+        t.cell(0, j).text = df.columns[j]
     for i in range(df.shape[0]):
         for j in range(df.shape[-1]):
-            t.cell(i+1,j).text = str(df.values[i,j])
+            t.cell(i + 1, j).text = str(df.values[i, j])
+
     if not PK.empty:
         document.add_heading('schema.' + tableName[0] + ' - Primary Keys', level=1)
-        t = document.add_table(PK.shape[0]+1, PK.shape[1], style='Light Grid Accent 1')
+        t = document.add_table(PK.shape[0] + 1, PK.shape[1], style='Light Grid Accent 1')
         for idx in range(len(PK.columns)):
             t.columns[idx].width = Mm(pkMax[idx] * 3)
             for cell in t.column_cells(idx):
                 cell.width = Mm(pkMax[idx] * 3)
         for j in range(PK.shape[-1]):
-            t.cell(0,j).text = PK.columns[j]
+            t.cell(0, j).text = PK.columns[j]
         for i in range(PK.shape[0]):
             for j in range(PK.shape[-1]):
-                t.cell(i+1,j).text = str(PK.values[i,j])
+                t.cell(i + 1, j).text = str(PK.values[i, j])
+
     if not FK.empty:
         document.add_heading('schema.' + tableName[0]  + ' - Foreign Keys', level=1)
-        t = document.add_table(FK.shape[0]+1, FK.shape[1], style='Light Grid Accent 1')
+        t = document.add_table(FK.shape[0] + 1, FK.shape[1], style='Light Grid Accent 1')
         for idx in range(len(FK.columns)):
             t.columns[idx].width = Mm(fkMax[idx] * 3)
             for cell in t.column_cells(idx):
                 cell.width = Mm(fkMax[idx] * 3)
         for j in range(FK.shape[-1]):
-            t.cell(0,j).text = FK.columns[j]
+            t.cell(0, j).text = FK.columns[j]
         for i in range(FK.shape[0]):
             for j in range(FK.shape[-1]):
-                t.cell(i+1,j).text = str(FK.values[i,j])
+                t.cell(i + 1, j).text = str(FK.values[i, j])
 
 # Saving Word Document
 document.save('DB2_Specs.docx')
